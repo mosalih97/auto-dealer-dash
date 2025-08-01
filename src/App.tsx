@@ -11,7 +11,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import UsersManagement from "./pages/UsersManagement";
-import ApproveAds from "./pages/ApproveAds";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,7 +33,6 @@ const App = () => (
             }>
               <Route index element={<Dashboard />} />
               <Route path="users" element={<UsersManagement />} />
-              <Route path="approve-ads" element={<ApproveAds />} />
               <Route path="ads" element={<Dashboard />} />
               <Route path="add-ad" element={<Dashboard />} />
               <Route path="reports" element={<Dashboard />} />

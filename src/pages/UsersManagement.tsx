@@ -32,10 +32,12 @@ import { toast } from 'sonner';
 
 const UsersManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [uidSearch, setUidSearch] = useState('');
 
   const users = [
     {
       id: 1,
+      uid: 'USR001',
       name: 'أحمد محمد',
       email: 'ahmed.mohamed@example.com',
       phone: '+966501234567',
@@ -47,6 +49,7 @@ const UsersManagement = () => {
     },
     {
       id: 2,
+      uid: 'USR002',
       name: 'فاطمة علي',
       email: 'fatema.ali@example.com',
       phone: '+966507654321',
@@ -58,6 +61,7 @@ const UsersManagement = () => {
     },
     {
       id: 3,
+      uid: 'USR003',
       name: 'خالد السعد',
       email: 'khalid.saad@example.com',
       phone: '+966509876543',
@@ -69,6 +73,7 @@ const UsersManagement = () => {
     },
     {
       id: 4,
+      uid: 'USR004',
       name: 'سارة أحمد',
       email: 'sara.ahmed@example.com',
       phone: '+966505555555',
@@ -118,11 +123,13 @@ const UsersManagement = () => {
     toast.success('تم تفعيل المستخدم بنجاح');
   };
 
-  const filteredUsers = users.filter(user =>
-    user.name.includes(searchTerm) || 
-    user.email.includes(searchTerm) ||
-    user.phone.includes(searchTerm)
-  );
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = user.name.includes(searchTerm) || 
+                         user.email.includes(searchTerm) ||
+                         user.phone.includes(searchTerm);
+    const matchesUid = uidSearch === '' || user.uid.toLowerCase().includes(uidSearch.toLowerCase());
+    return matchesSearch && matchesUid;
+  });
 
   return (
     <div className="space-y-6">
@@ -140,14 +147,22 @@ const UsersManagement = () => {
           <CardTitle className="arabic-text">البحث والفلترة</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center space-x-2 space-x-reverse">
-            <div className="relative flex-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="البحث في المستخدمين..."
+                placeholder="البحث بالاسم، البريد أو الهاتف..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 arabic-text"
+              />
+            </div>
+            <div className="relative">
+              <Input
+                placeholder="البحث بـ UID..."
+                value={uidSearch}
+                onChange={(e) => setUidSearch(e.target.value)}
+                className="arabic-text"
               />
             </div>
           </div>
@@ -166,6 +181,7 @@ const UsersManagement = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="arabic-text text-right">UID</TableHead>
                 <TableHead className="arabic-text text-right">الاسم</TableHead>
                 <TableHead className="arabic-text text-right">البريد الإلكتروني</TableHead>
                 <TableHead className="arabic-text text-right">الهاتف</TableHead>
@@ -179,6 +195,7 @@ const UsersManagement = () => {
             <TableBody>
               {filteredUsers.map((user) => (
                 <TableRow key={user.id}>
+                  <TableCell className="font-mono text-sm">{user.uid}</TableCell>
                   <TableCell className="font-medium arabic-text">{user.name}</TableCell>
                   <TableCell className="ltr text-left">{user.email}</TableCell>
                   <TableCell className="ltr text-left">{user.phone}</TableCell>
@@ -196,10 +213,12 @@ const UsersManagement = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="arabic-text">
-                        <DropdownMenuItem onClick={() => handleUpgradeUser(user.id)}>
-                          <Crown className="mr-2 h-4 w-4" />
-                          ترقية لمميز
-                        </DropdownMenuItem>
+                        {user.role !== 'premium' && user.role !== 'admin' && (
+                          <DropdownMenuItem onClick={() => handleUpgradeUser(user.id)}>
+                            <Crown className="mr-2 h-4 w-4" />
+                            ترقية لمميز
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem>
                           <Eye className="mr-2 h-4 w-4" />
                           عرض التفاصيل
